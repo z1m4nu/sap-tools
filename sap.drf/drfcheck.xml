@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project sap.drf with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/.."/>
+    <property name="dir.jarfile" value="${dir.buildfile}/release/lib"/>
+    <target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/drfcheck.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.crossroad.sap.drf.DRFCheck"/>
+                <attribute name="Class-Path" value=". drfcheck_lib/ngdbc.jar drfcheck_lib/commons-logging-1.2.jar drfcheck_lib/commons-cli-1.4.jar drfcheck_lib/commons-codec-1.11.jar"/>
+            </manifest>
+            <fileset dir="${dir.buildfile}/target/classes"/>
+        </jar>
+        <delete dir="${dir.jarfile}/drfcheck_lib"/>
+        <mkdir dir="${dir.jarfile}/drfcheck_lib"/>
+        <copy file="${dir.jarfile}/ngdbc.jar" todir="${dir.jarfile}/drfcheck_lib"/>
+        <copy file="D:/sources/001_MAVEN/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" todir="${dir.jarfile}/drfcheck_lib"/>
+        <copy file="D:/sources/001_MAVEN/repository/commons-cli/commons-cli/1.4/commons-cli-1.4.jar" todir="${dir.jarfile}/drfcheck_lib"/>
+        <copy file="D:/sources/001_MAVEN/repository/commons-codec/commons-codec/1.11/commons-codec-1.11.jar" todir="${dir.jarfile}/drfcheck_lib"/>
+    </target>
+</project>
