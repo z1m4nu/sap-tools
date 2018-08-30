@@ -21,7 +21,7 @@ import org.apache.commons.cli.Options;
 import org.crossroad.sap.drf.exception.CMDLineParserException;
 import org.crossroad.sap.drf.exception.DRFCheckException;
 import org.crossroad.sap.drf.impl.AbstractLogger;
-import org.crossroad.sap.drf.impl.CheckManagerConfig;
+import org.crossroad.sap.drf.impl.DRFConfigManager;
 import org.crossroad.sap.drf.impl.DRFComparator;
 
 /**
@@ -77,7 +77,7 @@ public class DRFCheck extends AbstractLogger {
 				/*
 				 * Load configuration files
 				 */
-				CheckManagerConfig.getInstance().load(cmdLine.getOptionValue('d'));
+				DRFConfigManager.getInstance().load(cmdLine.getOptionValue('d'));
 
 				doCompare(checkId, infile);
 
@@ -120,14 +120,14 @@ public class DRFCheck extends AbstractLogger {
 			format.applyPattern("YYYYMMDD-HHmmss");
 			String dtFile = format.format(new Date());
 
-			writeToFile(CheckManagerConfig.getInstance().getOutDirectory() + File.separator + dtFile + "-car.txt",
+			writeToFile(DRFConfigManager.getInstance().getOutDirectory() + File.separator + dtFile + "-car.txt",
 					comparator.getCarList());
-			writeToFile(CheckManagerConfig.getInstance().getOutDirectory() + File.separator + dtFile + "-missing.txt",
+			writeToFile(DRFConfigManager.getInstance().getOutDirectory() + File.separator + dtFile + "-missing.txt",
 					comparator.getMissingArticles());
-			writeToFile(CheckManagerConfig.getInstance().getOutDirectory() + File.separator + dtFile + "-sql.txt",
+			writeToFile(DRFConfigManager.getInstance().getOutDirectory() + File.separator + dtFile + "-sql.txt",
 					comparator.getSqlOrders());
 			
-			String tplSQL = CheckManagerConfig.getInstance().getSQL(id, CheckManagerConfig.SOURCE, "insert.d_art");
+			String tplSQL = DRFConfigManager.getInstance().getSQL(id, DRFConfigManager.SOURCE, "insert.d_art");
 
 			if (tplSQL != null) {
 				List<String> dartSQL = new ArrayList<String>();
@@ -137,9 +137,9 @@ public class DRFCheck extends AbstractLogger {
 					}
 				}
 
-				writeToFile(CheckManagerConfig.getInstance().getOutDirectory() + File.separator + dtFile + "-dart.sql",
+				writeToFile(DRFConfigManager.getInstance().getOutDirectory() + File.separator + dtFile + "-dart.sql",
 						dartSQL);
-				writeToFile(CheckManagerConfig.getInstance().getOutDirectory() + File.separator + dtFile + "-dart.txt",
+				writeToFile(DRFConfigManager.getInstance().getOutDirectory() + File.separator + dtFile + "-dart.txt",
 						comparator.getDartArticles());
 			}
 

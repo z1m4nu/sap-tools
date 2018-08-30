@@ -73,10 +73,10 @@ public class DRFComparator extends AbstractLogger {
 
 		try {
 			log.info("Checking data in SAP ECC (MARA)");
-			String url = CheckManagerConfig.getInstance().getUrl(id, CheckManagerConfig.SOURCE);
-			String username = CheckManagerConfig.getInstance().getUser(id, CheckManagerConfig.SOURCE);
-			String passwd = CheckManagerConfig.getInstance().getPassword(id, CheckManagerConfig.SOURCE);
-			String prefixSQL = CheckManagerConfig.getInstance().getSQL(id, CheckManagerConfig.SOURCE, "mara");
+			String url = DRFConfigManager.getInstance().getUrl(id, DRFConfigManager.SOURCE);
+			String username = DRFConfigManager.getInstance().getUser(id, DRFConfigManager.SOURCE);
+			String passwd = DRFConfigManager.getInstance().getPassword(id, DRFConfigManager.SOURCE);
+			String prefixSQL = DRFConfigManager.getInstance().getSQL(id, DRFConfigManager.SOURCE, "mara");
 
 			StringBuffer suffixSQL = new StringBuffer();
 
@@ -109,7 +109,7 @@ public class DRFComparator extends AbstractLogger {
 			pstmt.close();
 
 			log.info("Checking data in SAP ECC (DMF_D_ART)");
-			query = CheckManagerConfig.getInstance().getSQL(id, CheckManagerConfig.SOURCE, "select.d_art") + suffixSQL;
+			query = DRFConfigManager.getInstance().getSQL(id, DRFConfigManager.SOURCE, "select.d_art") + suffixSQL;
 			sqlOrders.add(query);
 			pstmt = connection.prepareStatement(query);
 
@@ -154,10 +154,10 @@ public class DRFComparator extends AbstractLogger {
 
 		try {
 			log.info("Checking data in SAP CAR (/DMF/PROD_EXT_XR)");
-			String url = CheckManagerConfig.getInstance().getUrl(id, CheckManagerConfig.DESTINATION);
-			String username = CheckManagerConfig.getInstance().getUser(id, CheckManagerConfig.DESTINATION);
-			String passwd = CheckManagerConfig.getInstance().getPassword(id, CheckManagerConfig.DESTINATION);
-			String prefixSQL = CheckManagerConfig.getInstance().getSQL(id, CheckManagerConfig.DESTINATION, "dmf");
+			String url = DRFConfigManager.getInstance().getUrl(id, DRFConfigManager.DESTINATION);
+			String username = DRFConfigManager.getInstance().getUser(id, DRFConfigManager.DESTINATION);
+			String passwd = DRFConfigManager.getInstance().getPassword(id, DRFConfigManager.DESTINATION);
+			String prefixSQL = DRFConfigManager.getInstance().getSQL(id, DRFConfigManager.DESTINATION, "dmf");
 			StringBuffer suffixSQL = new StringBuffer();
 
 			for (String article : maraList) {

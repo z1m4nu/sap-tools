@@ -7,19 +7,19 @@ import java.util.Properties;
 
 import org.crossroad.sap.drf.exception.PopertiesLoaderException;
 
-public class CheckManagerConfig extends AbstractLogger {
+public class DRFConfigManager extends AbstractLogger {
 	public static final String SOURCE = "source";
 	public static final String DESTINATION = "destination";
-	private final static CheckManagerConfig instance = new CheckManagerConfig();
+	private final static DRFConfigManager instance = new DRFConfigManager();
 
 	private Properties properties = new Properties();
 	private String homeDirectory = null;
 
-	private CheckManagerConfig() {
+	private DRFConfigManager() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static CheckManagerConfig getInstance() {
+	public static DRFConfigManager getInstance() {
 		return instance;
 	}
 
