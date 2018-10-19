@@ -1,0 +1,348 @@
+<!-- This ant project includes the following tasks: - netweaver-deploy : 
+	adds NetWeaver specific resources and deploys ear - netweaver-undeploy : 
+	undeploys from file -->
+
+<project xmlns:props="antlib:org.apache.ant.props" name="SAP Deployer" basedir=".">
+
+	<!-- Library dir -->
+	<property name="sap.lib.dir" value="${sap.deployer.home}/lib/sap" />
+	<property name="ant.lib.dir" value="${sap.deployer.home}/lib/ant" />
+	<property name="ext.lib.dir" value="${sap.deployer.home}/lib/ext" />
+
+	<property name="tab" value="&#x0009;" />
+	<property file="${sap.deployer.home}/cfg/${deploy.config}" />
+
+
+	<!-- Build automatically classpath -->
+	<path id="class.path">
+		<fileset dir="${sap.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${ant.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${ext.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Load the ant contrib lib property -->
+	<typedef uri="antlib:org.apache.ant.props" resource="org/apache/ant/props/antlib.xml" classpath="${ant.lib.dir}/kuali-antprops-1.0.1-alpha.jar" />
+	<propertyhelper>
+		<props:nested />
+	</propertyhelper>
+
+	<!-- Task definition -->
+	<taskdef name="sapdeploy" classname="com.sap.engine.services.dc.ant.deploy.SAPDeploy">
+		<classpath refid="class.path" />
+	</taskdef>
+
+	<taskdef name="sapundeploy" classname="com.sap.engine.services.dc.ant.undeploy.SAPUndeploy">
+		<classpath refid="class.path" />
+	</taskdef>
+
+	<taskdef name="startapplication" classname="org.crossroad.ant.sap.StartApplication">
+		<classpath refid="class.path" />
+	</taskdef>
+
+	<taskdef name="stopapplication" classname="org.crossroad.ant.sap.StopApplication">
+		<classpath refid="class.path" />
+	</taskdef>
+
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.lib.dir}/ant-contrib.jar" />
+		</classpath>
+	</taskdef>
+
+
+	<!-- Macro definition -->
+	<macrodef name="setToken">
+		<attribute name="prefix" />
+		<attribute name="suffix" />
+		<sequential>
+			<var name="token" unset="true" />
+			<property name="token" value="${@{prefix}@{suffix}}" />
+		</sequential>
+	</macrodef>
+	<!-- Macro setValue Parameters: - Comparator: String prefix - propertyName: 
+		Name of the property Call: <setValue comparator="" propertyName=""/> -->
+	<macrodef name="setValue">
+		<attribute name="comparator" />
+		<attribute name="propertyName" />
+		<sequential>
+			<!-- Set deploy.file.list property -->
+			<setToken prefix="@{comparator}" suffix=".@{propertyName}" />
+			<if>
+				<contains string="${token}" substring="@{comparator}.@{propertyName}" />
+				<then>
+					<property name="@{propertyName}" value="${default.@{propertyName}}" />
+				</then>
+				<else>
+					<property name="@{propertyName}" value="${token}" />
+				</else>
+			</if>
+		</sequential>
+	</macrodef>
+	
+	<!-- START OF PRIVATE PART -->
+	<target name="prv-application">
+		<echo message="Servers: ${servers}" />
+		<echo message="Components: ${components}" />
+
+		<for list="${components}" param="component">
+			<sequential>
+				<!-- Parse server list -->
+				<for list="${servers}" param="server">
+					<sequential>
+						<loadresource property="sap.host">
+							<string value="@{server}" />
+							<filterchain>
+								<tokenfilter>
+									<replaceregex pattern="([^/]+):([^/]+)" replace="\1" />
+								</tokenfilter>
+							</filterchain>
+						</loadresource>
+						<loadresource property="sap.port">
+							<string value="@{server}" />
+							<filterchain>
+								<tokenfilter>
+									<replaceregex pattern="([^/]+):([^/]+)" replace="\2" />
+								</tokenfilter>
+							</filterchain>
+						</loadresource>
+
+						<propertyregex property="parsedHostname" input="${sap.host}" regexp="([^\.]+)" select="\1" casesensitive="false" />
+
+						<!-- Set sap.user property -->
+						<setValue comparator="${parsedHostname}" propertyName="sap.user" />
+
+						<!-- Set sap.password property -->
+						<setValue comparator="${parsedHostname}" propertyName="sap.password" />
+
+						<antcall target="prv-${action}">
+							<param name="server" value="${sap.host}" />
+							<param name="port" value="${sap.port}" />
+							<param name="user" value="${sap.user}" />
+							<param name="password" value="${sap.password}" />
+							<param name="component" value="@{component}" />
+						</antcall>
+
+						<var name="sap.port" unset="true" />
+						<var name="sap.host" unset="true" />
+						<var name="sap.user" unset="true" />
+						<var name="sap.password" unset="true" />
+						<var name="parsedHostname" unset="true" />
+
+					</sequential>
+				</for>
+			</sequential>
+		</for>
+	</target>
+
+	<target name="prv-application-start">
+		<startapplication timeout="3000" warningaserror="false" dryrun="${dryrun}">
+			<sapcomponentapplication application="${component}" />
+			<sapj2eeengine serverhost="${server}" serverport="${port}" username="${user}" userpassword="${password}" />
+		</startapplication>
+	</target>
+	<target name="prv-application-stop">
+
+		<stopapplication timeout="3000" warningaserror="false" dryrun="${dryrun}">
+			<sapcomponentapplication application="${component}" />
+			<sapj2eeengine serverhost="${server}" serverport="${port}" username="${user}" userpassword="${password}" />
+		</stopapplication>
+
+	</target>
+	<!-- END OF PRIVATE PART -->
+		
+	<!-- START OF PUBLIC PART -->
+	<!-- Deploy SCA files -->
+	<target name="deploy" description="Deploy SCA files based on file list specified">
+		<for list="${deploy.file.list}" param="filename">
+			<sequential>
+
+				<var name="file.name" unset="true" />
+				<var name="file.dir" unset="true" />
+				<var name="file.exist" unset="true" />
+
+				<var name="deploy.file.dir" unset="true" />
+				<var name="deploy.file.name" unset="true" />
+
+				<dirname property="file.dir" file="@{filename}" />
+				<basename property="file.name" file="@{filename}" />
+
+				<available file="${file.dir}/${file.name}" property="file.exist" />
+
+				<if>
+					<equals arg1="${file.exist}" arg2="true" />
+					<then>
+						<property name="deploy.file.dir" value="${file.dir}" />
+						<property name="deploy.file.name" value="${file.name}" />
+					</then>
+					<else>
+						<property name="deploy.file.dir" value="${deploy.default.file.loc}" />
+						<property name="deploy.file.name" value="${file.name}" />
+					</else>
+				</if>
+
+				<for list="${deploy.server.list}" param="server">
+					<sequential>
+						<!-- PARSE Server -->
+						<loadresource property="sap.host">
+							<string value="@{server}" />
+							<filterchain>
+								<tokenfilter>
+									<replaceregex pattern="([^/]+):([^/]+)" replace="\1" />
+								</tokenfilter>
+							</filterchain>
+						</loadresource>
+						<loadresource property="sap.port">
+							<string value="@{server}" />
+							<filterchain>
+								<tokenfilter>
+									<replaceregex pattern="([^/]+):([^/]+)" replace="\2" />
+								</tokenfilter>
+							</filterchain>
+						</loadresource>
+
+						<propertyregex property="parsedHostname" input="${sap.host}" regexp="([^\.]+)" select="\1" casesensitive="false" />
+
+						<!-- Set sap.user property -->
+						<setValue comparator="${parsedHostname}" propertyName="sap.user" />
+
+						<!-- Set sap.password property -->
+						<setValue comparator="${parsedHostname}" propertyName="sap.password" />
+
+						<!-- Set deploy.file.loc property -->
+						<setValue comparator="${parsedHostname}" propertyName="deploy.file.loc" />
+
+						<!-- Call internal task -->
+						<echo message="Deploying  ${deploy.file.dir}/${deploy.file.name} to hostname ${sap.host}" />
+						<!-- deploy the SDA -->
+						<if>
+							<equals arg1="${dryrun}" arg2="false" />
+							<then>
+								<sapdeploy versionrule="all">
+									<saperrorhandling erroraction="prerequisites" errorstrategy="stop" />
+									<saperrorhandling erroraction="deploy" errorstrategy="stop" />
+									<fileset dir="${deploy.file.dir}" includes="${deploy.file.name}" />
+									<sapj2eeengine serverhost="${sap.host}" serverport="${sap.port}" username="${sap.user}" userpassword="${sap.password}" />
+								</sapdeploy>
+							</then>
+							<else>
+								<echo message="Deploying ${deploy.file.dir}/${deploy.file.name} on server ${sap.host}:${sap.port}" />
+							</else>
+						</if>
+
+
+						<!-- -->
+						<var name="sap.port" unset="true" />
+						<var name="sap.host" unset="true" />
+						<var name="sap.user" unset="true" />
+						<var name="sap.password" unset="true" />
+						<var name="parsedHostname" unset="true" />
+						<var name="deploy.file.loc" unset="true" />
+						<var name="deploy.file.list" unset="true" />
+						<var name="undeploy.filename" unset="true" />
+
+					</sequential>
+				</for>
+			</sequential>
+		</for>
+	</target>
+
+
+	<!-- Undeploy file -->
+	<target name="undeploy" description="Undeploy SCA Files based on undeploy file">
+		<property name="undeploy.file" value="${sap.deployer.home}/cfg/${undeploy.filename}" />
+
+		<for list="${undeploy.server.list}" param="server">
+			<sequential>
+				<!-- PARSE Server -->
+				<loadresource property="sap.host">
+					<string value="@{server}" />
+					<filterchain>
+						<tokenfilter>
+							<replaceregex pattern="([^/]+):([^/]+)" replace="\1" />
+						</tokenfilter>
+					</filterchain>
+				</loadresource>
+				<loadresource property="sap.port">
+					<string value="@{server}" />
+					<filterchain>
+						<tokenfilter>
+							<replaceregex pattern="([^/]+):([^/]+)" replace="\2" />
+						</tokenfilter>
+					</filterchain>
+				</loadresource>
+
+				<propertyregex property="parsedHostname" input="${sap.host}" regexp="([^\.]+)" select="\1" casesensitive="false" />
+
+				<!-- Set sap.user property -->
+				<setValue comparator="${parsedHostname}" propertyName="sap.user" />
+
+				<!-- Set sap.password property -->
+				<setValue comparator="${parsedHostname}" propertyName="sap.password" />
+
+
+				<var name="file.exist" unset="true" />
+				<available file="${undeploy.file}" property="file.exist" />
+				<if>
+					<equals arg1="${file.exist}" arg2="true" />
+					<then>
+						<echo message="Udeploying SCA on server ${sap.host} using file ${undeploy.file}" />
+						<if>
+							<equals arg1="${dryrun}" arg2="false" />
+							<then>
+								<sapundeploy undeploystrategy="IfDependingStop">
+									<saperrorhandling erroraction="prerequisites" errorstrategy="stop" />
+									<saperrorhandling erroraction="undeploy" errorstrategy="stop" />
+									<sapundeploylist listfilepath="${undeploy.file}" />
+									<sapj2eeengine serverhost="${sap.host}" serverport="${sap.port}" username="${sap.user}" userpassword="${sap.password}" />
+								</sapundeploy>
+							</then>
+							<else>
+								<echo message="Udeploying SCA on server ${sap.host}:${sap.port} using file ${undeploy.file}" />
+							</else>
+						</if>
+					</then>
+					<else>
+						<fail>File ${undeploy.file} does not exist.</fail>
+					</else>
+				</if>
+				<!-- -->
+				<var name="sap.port" unset="true" />
+				<var name="sap.host" unset="true" />
+				<var name="sap.user" unset="true" />
+				<var name="sap.password" unset="true" />
+				<var name="parsedHostname" unset="true" />
+				<var name="undeploy.filename" unset="true" />
+
+			</sequential>
+		</for>
+	</target>
+
+
+
+	<target name="start-application" description="Start application">
+		<antcall target="prv-application">
+			<param name="action" value="application-start" />
+			<param name="servers" value="${application.start.server.list}" />
+			<param name="components" value="${application.start.components}" />
+		</antcall>
+	</target>
+
+	<target name="stop-application" description="Stop application">
+		<antcall target="prv-application">
+			<param name="action" value="application-stop" />
+			<param name="servers" value="${application.stop.server.list}" />
+			<param name="components" value="${application.stop.components}" />
+		</antcall>
+	</target>
+
+	<target name="test" depends="stop-application,start-application" description="test">
+		<echo message="Test passed..." />
+	</target>
+</project>

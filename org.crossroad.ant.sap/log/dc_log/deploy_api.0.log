@@ -1,0 +1,97 @@
+<!--LOGHEADER[START]/-->
+<!--HELP[Manual modification of the header may cause parsing problem!]/-->
+<!--LOGGINGVERSION[2.0.7.1006]/-->
+<!--NAME[D:\sources\java\eclipse\workspace-photon\org.crossroad.ant.sap\log\dc_log\deploy_api.log]/-->
+<!--PATTERN[deploy_api.log]/-->
+<!--FORMATTER[com.sap.tc.logging.TraceFormatter(%24d %s: %M %m)]/-->
+<!--ENCODING[UTF8]/-->
+<!--FILESET[0, 5, 10485760]/-->
+<!--PREVIOUSFILE[deploy_api.4.log]/-->
+<!--NEXTFILE[deploy_api.1.log]/-->
+<!--LOGHEADER[END]/-->
+Sep 13, 2018 1:07:00 PM  Info: com.sap.ASJ.dpl_api.001023 Deployment of [name: 'twl-cis-sca', vendor: 'gk-software.com' (sda)] finished.
+Sep 13, 2018 1:07:00 PM  Info: com.sap.ASJ.dpl_api.001023 Deployment of [name: 'CLUSTERINFRASTUCTURESERVER', vendor: 'gk-software.com' (SCA)] finished.
+Sep 13, 2018 1:07:00 PM  Info: com.sap.ASJ.dpl_api.001052 +++ Deployment of session ID [102] finished with status [Warning] +++. [[ deployerId=1 ]] [[#4: 17.429 sec]] [
+===== Summary - Deploy Result - Start =====
+------------------------
+Type | Status  : Count
+------------------------
+ > SCA(s)
+   - [Warning] : [1]
+ > SDA(s)
+   - [Warning] : [1]
+------------------------
+------------------------
+Type | Status  : Id
+------------------------
+ > SCA(s)
+   - [Warning] : name: 'CLUSTERINFRASTUCTURESERVER', vendor: 'gk-software.com', 
+ > SDA(s)
+   - [Warning] : name: 'twl-cis-sca', vendor: 'gk-software.com', 
+------------------------
+===== Summary - Deploy Result - End =====
+]
+Sep 13, 2018 1:07:01 PM  Info: com.sap.ASJ.dpl_api.001181 error action [PrerequisitesCheckAction] is [OnErrorStop]
+Sep 13, 2018 1:07:01 PM  Info: com.sap.ASJ.dpl_api.001181 error action [UndeploymentAction] is [OnErrorStop]
+Sep 13, 2018 1:07:02 PM  Info: com.sap.ASJ.dpl_api.001199 Undeployment of [name: 'twl-cis-sca', vendor: 'gk-software.com' (sda)] finished.
+Sep 13, 2018 1:07:02 PM  Info: com.sap.ASJ.dpl_api.001196 +++ Undeployment finished with status [Success] +++ [[#2: 0.608 sec]] [
+===== Summary - Undeploy Result - Start =====
+------------------------
+Type | Status  : Count
+------------------------
+ > SCA(s)
+ > SDA(s)
+   - [Success] : [1]
+------------------------
+------------------------
+Type | Status  : Id
+------------------------
+ > SCA(s)
+ > SDA(s)
+   - [Success] : gk-software.com_twl-cis-sca, 
+------------------------
+===== Summary - Undeploy Result - End =====
+]
+Sep 13, 2018 2:56:51 PM  Info: com.sap.ASJ.dpl_api.001023 Deployment of [name: 'twl-cis-sca', vendor: 'gk-software.com' (sda)] finished.
+Sep 13, 2018 2:56:51 PM  Info: com.sap.ASJ.dpl_api.001023 Deployment of [name: 'CLUSTERINFRASTUCTURESERVER', vendor: 'gk-software.com' (SCA)] finished.
+Sep 13, 2018 2:56:51 PM  Info: com.sap.ASJ.dpl_api.001052 +++ Deployment of session ID [104] finished with status [Warning] +++. [[ deployerId=1 ]] [[#4: 15.768 sec]] [
+===== Summary - Deploy Result - Start =====
+------------------------
+Type | Status  : Count
+------------------------
+ > SCA(s)
+   - [Warning] : [1]
+ > SDA(s)
+   - [Warning] : [1]
+------------------------
+------------------------
+Type | Status  : Id
+------------------------
+ > SCA(s)
+   - [Warning] : name: 'CLUSTERINFRASTUCTURESERVER', vendor: 'gk-software.com', 
+ > SDA(s)
+   - [Warning] : name: 'twl-cis-sca', vendor: 'gk-software.com', 
+------------------------
+===== Summary - Deploy Result - End =====
+]
+Sep 13, 2018 2:56:53 PM  Info: com.sap.ASJ.dpl_api.001181 error action [PrerequisitesCheckAction] is [OnErrorStop]
+Sep 13, 2018 2:56:53 PM  Info: com.sap.ASJ.dpl_api.001181 error action [UndeploymentAction] is [OnErrorStop]
+Sep 13, 2018 2:56:53 PM  Info: com.sap.ASJ.dpl_api.001199 Undeployment of [name: 'twl-cis-sca', vendor: 'gk-software.com' (sda)] finished.
+Sep 13, 2018 2:56:53 PM  Info: com.sap.ASJ.dpl_api.001196 +++ Undeployment finished with status [Success] +++ [[#2: 0.602 sec]] [
+===== Summary - Undeploy Result - Start =====
+------------------------
+Type | Status  : Count
+------------------------
+ > SCA(s)
+ > SDA(s)
+   - [Success] : [1]
+------------------------
+------------------------
+Type | Status  : Id
+------------------------
+ > SCA(s)
+ > SDA(s)
+   - [Success] : gk-software.com_twl-cis-sca, 
+------------------------
+===== Summary - Undeploy Result - End =====
+]
