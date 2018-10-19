@@ -4,7 +4,9 @@
 package org.crossroad.sap.drf;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -133,7 +135,7 @@ public class DRFCheck extends AbstractLogger {
 				List<String> dartSQL = new ArrayList<String>();
 				for (String article : comparator.getMissingArticles()) {
 					if (!comparator.getDartArticles().contains(article)) {
-						dartSQL.add(tplSQL.replaceAll("_ARTICLE_CODE_", article));
+						dartSQL.add(tplSQL.replace("_ARTICLE_CODE_", article));
 					}
 				}
 
@@ -158,12 +160,12 @@ public class DRFCheck extends AbstractLogger {
 	}
 
 	private void writeToFile(String file, List<String> content) throws Exception {
-		FileWriter writer = null;
+		BufferedWriter writer = null;
 		try {
 
 			log.info("Creating file [" + file + "]");
 
-			writer = new FileWriter(file);
+			writer = new BufferedWriter(new FileWriter(file));
 
 			for (String line : content) {
 				writer.write(line + "\n");
