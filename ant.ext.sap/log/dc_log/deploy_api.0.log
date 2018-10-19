@@ -1,0 +1,21 @@
+<!--LOGHEADER[START]/-->
+<!--HELP[Manual modification of the header may cause parsing problem!]/-->
+<!--LOGGINGVERSION[2.0.7.1006]/-->
+<!--NAME[D:\sources\java\eclipse\workspace-photon\ant.ext.sap\log\dc_log\deploy_api.log]/-->
+<!--PATTERN[deploy_api.log]/-->
+<!--FORMATTER[com.sap.tc.logging.TraceFormatter(%24d %s: %M %m)]/-->
+<!--ENCODING[UTF8]/-->
+<!--FILESET[0, 5, 10485760]/-->
+<!--PREVIOUSFILE[deploy_api.4.log]/-->
+<!--NEXTFILE[deploy_api.1.log]/-->
+<!--LOGHEADER[END]/-->
+Oct 16, 2018 11:57:49 AM Info: com.sap.ASJ.dpl_api.001161 Going to check.
+Oct 16, 2018 11:58:14 AM Info: com.sap.ASJ.dpl_api.001162 Check result: [Self Check status 'OK'
+description: 	Checker name 'Repository consistency checker'.Status :'OK'
+
+]
+Oct 16, 2018 12:05:00 PM Info: com.sap.ASJ.dpl_api.001161 Going to check.
+Oct 16, 2018 12:05:07 PM Info: com.sap.ASJ.dpl_api.001162 Check result: [Self Check status 'OK'
+description: 	Checker name 'Repository consistency checker'.Status :'OK'
+
+]
